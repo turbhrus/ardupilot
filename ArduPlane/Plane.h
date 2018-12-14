@@ -122,6 +122,9 @@
 #include <SITL/SITL.h>
 #endif
 
+#include <AudioVario/AudioVario.h>
+#include <Humidity/Humidity.h>
+
 /*
   a plane specific AP_AdvancedFailsafe class
  */
@@ -797,6 +800,41 @@ private:
     int32_t last_mixer_crc = -1;
 #endif // CONFIG_HAL_BOARD
     
+    // XCSoar related stuff
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Vario
+    AudioVario audio_vario;
+
+    // Humidity/Temperature sensor
+    Humidity hygrometer;
+
+    // True airspeed (m/s)
+    float airspeed_tas;
+
+    // total energy compensated vario (m/s)
+    float vario_TE;
+
+    // Differentiator used in total energy compensation
+    DerivativeFilter<float,11> airspeed_derivative_lpf;
+
+    // LPF used to smooth the airspeed measurement
+    butter10hz1_6 airspeed_lpf;
+
+    // initialise !!!
+    struct{
+        float speed_to_fly; ///< Optimal IAS (m/s)
+        uint16_t current_turnpoint; ///< ID of target waypoint
+        uint8_t flying; ///< Non zero if flying detected
+        uint8_t circling; ///< Non zero if thermalling detected
+        uint8_t airspace_warning_idx; ///< Unique warning identifier. Wraps around after 255
+        uint8_t terrain_warning; ///<
+    }xcsoar_data;
+
+    // dummy variables used for printing debug messages by send_debugtext()
+    float debug_dummy[4] = {0.0, 0.0, 0.0, 0.0};
+
+
     void adjust_nav_pitch_throttle(void);
     void update_load_factor(void);
     void send_fence_status(mavlink_channel_t chan);
@@ -1069,6 +1107,15 @@ private:
     // support for AP_Avoidance custom flight mode, AVOID_ADSB
     bool avoid_adsb_init(bool ignore_checks);
     void avoid_adsb_run();
+
+    // "pixhg" functions
+    void update_audio_vario();
+    float get_true_airspeed();
+    void compensated_vario();
+    void send_debugtext();
+    void send_pixhawk_hg_fast(mavlink_channel_t chan);
+    void send_pixhawk_hg_med(mavlink_channel_t chan);
+    void send_pixhawk_hg_slow(mavlink_channel_t chan);
 
     enum Failsafe_Action {
         Failsafe_Action_None      = 0,
