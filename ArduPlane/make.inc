@@ -58,3 +58,5 @@ LIBRARIES += PID
 LIBRARIES += AP_Soaring
 LIBRARIES += AP_Devo_Telem
 LIBRARIES += AP_OSD
+LIBRARIES += AudioVario
+LIBRARIES += Humidity
