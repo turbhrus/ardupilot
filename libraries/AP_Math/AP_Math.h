@@ -159,6 +159,11 @@ inline int64_t constrain_int64(const int64_t amt, const int64_t low, const int64
     return constrain_value(amt, low, high);
 }
 
+// constrain a uint8_t value
+static inline uint8_t constrain_uint8(uint8_t amt, uint8_t low, uint8_t high) {
+    return ((amt)<(low)?(low):((amt)>(high)?(high):(amt)));
+}
+
 // degrees -> radians
 static inline constexpr float radians(float deg)
 {
