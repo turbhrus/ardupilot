@@ -103,6 +103,9 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
 #if LANDING_GEAR_ENABLED == ENABLED
     SCHED_TASK(landing_gear_update, 5, 50),
 #endif
+
+    SCHED_TASK(update_audio_vario,     50,    200),
+    SCHED_TASK(compensated_vario,      10,    200),
 };
 
 constexpr int8_t Plane::_failsafe_priorities[6];
