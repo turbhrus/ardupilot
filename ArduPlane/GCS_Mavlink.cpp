@@ -111,11 +111,8 @@ MAV_STATE GCS_MAVLINK_Plane::system_status() const
 
 void Plane::send_debugtext()
 {
-    /////////////////////////////////////////////////////////
-    ///// WRITE DEBUG MESSAGES HERE
-//    plane.gcs_send_text_fmt(MAV_SEVERITY_INFO, "%ld seconds", (long int)debug_dummy1);
-
-//  plane.gcs_send_text_fmt(MAV_SEVERITY_INFO, "| #sats %d, hdop %d, time %d |", gps.num_sats(), gps.get_hdop(), (uint32_t)((gps.time_epoch_usec() % 86400000000) / 1000) /1000);
+    // Write debug messages here
+    gcs().send_text(MAV_SEVERITY_INFO, "| #sats %d, hdop %d, time %d |", gps.num_sats(), gps.get_hdop(), (uint32_t)((gps.time_epoch_usec() % 86400000000) / 1000) /1000);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 }
