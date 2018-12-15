@@ -109,6 +109,17 @@ MAV_STATE GCS_MAVLINK_Plane::system_status() const
     return MAV_STATE_STANDBY;
 }
 
+void Plane::send_debugtext()
+{
+    /////////////////////////////////////////////////////////
+    ///// WRITE DEBUG MESSAGES HERE
+//    plane.gcs_send_text_fmt(MAV_SEVERITY_INFO, "%ld seconds", (long int)debug_dummy1);
+
+//  plane.gcs_send_text_fmt(MAV_SEVERITY_INFO, "| #sats %d, hdop %d, time %d |", gps.num_sats(), gps.get_hdop(), (uint32_t)((gps.time_epoch_usec() % 86400000000) / 1000) /1000);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+}
+
 void Plane::send_pixhawk_hg_fast(mavlink_channel_t chan)
 {
     Vector3f accel = ahrs.get_accel_ef_blended();
@@ -530,6 +541,26 @@ bool GCS_MAVLINK_Plane::try_send_message(enum ap_message id)
 
     switch (id) {
 
+    case MSG_DEBUGTEXT:
+        CHECK_PAYLOAD_SIZE(STATUSTEXT);
+        plane.send_debugtext();
+        return true;
+
+    case MSG_PIXHAWK_HG_FAST:
+        CHECK_PAYLOAD_SIZE(PIXHAWK_HG_FAST);
+        plane.send_pixhawk_hg_fast(chan);
+        break;
+
+    case MSG_PIXHAWK_HG_MED:
+        CHECK_PAYLOAD_SIZE(PIXHAWK_HG_MED);
+        plane.send_pixhawk_hg_med(chan);
+        break;
+
+    case MSG_PIXHAWK_HG_SLOW:
+        CHECK_PAYLOAD_SIZE(PIXHAWK_HG_SLOW);
+        plane.send_pixhawk_hg_slow(chan);
+        break;
+
     case MSG_EXTENDED_STATUS1:
         if (PAYLOAD_SIZE(chan, SYS_STATUS) +
             PAYLOAD_SIZE(chan, POWER_STATUS) > comm_get_txspace(chan)) {
@@ -616,7 +647,7 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
     // @Range: 0 10
     // @Increment: 1
     // @User: Advanced
-    AP_GROUPINFO("RAW_SENS", 0, GCS_MAVLINK, streamRates[0],  1),
+    AP_GROUPINFO("RAW_SENS", 0, GCS_MAVLINK, streamRates[0],  15),
 
     // @Param: EXT_STAT
     // @DisplayName: Extended status stream rate to ground station
@@ -625,7 +656,7 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
     // @Range: 0 10
     // @Increment: 1
     // @User: Advanced
-    AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRates[1],  1),
+    AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRates[1],  6),
 
     // @Param: RC_CHAN
     // @DisplayName: RC Channel stream rate to ground station
@@ -702,73 +733,78 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
 };
 
 static const ap_message STREAM_RAW_SENSORS_msgs[] = {
-    MSG_RAW_IMU,
-    MSG_SCALED_IMU2,
-    MSG_SCALED_IMU3,
-    MSG_SCALED_PRESSURE,
-    MSG_SCALED_PRESSURE2,
-    MSG_SCALED_PRESSURE3,
-    MSG_SENSOR_OFFSETS
+//    MSG_RAW_IMU,
+//    MSG_SCALED_IMU2,
+//    MSG_SCALED_IMU3,
+//    MSG_SCALED_PRESSURE,
+//    MSG_SCALED_PRESSURE2,
+//    MSG_SCALED_PRESSURE3,
+//    MSG_SENSOR_OFFSETS,
+    MSG_PIXHAWK_HG_FAST
 };
 static const ap_message STREAM_EXTENDED_STATUS_msgs[] = {
-    MSG_EXTENDED_STATUS1, // SYS_STATUS, POWER_STATUS
-    MSG_MEMINFO,
-    MSG_CURRENT_WAYPOINT,
-    MSG_GPS_RAW,
-    MSG_GPS_RTK,
-    MSG_GPS2_RAW,
-    MSG_GPS2_RTK,
-    MSG_NAV_CONTROLLER_OUTPUT,
-    MSG_FENCE_STATUS,
-    MSG_POSITION_TARGET_GLOBAL_INT,
+//    MSG_EXTENDED_STATUS1, // SYS_STATUS, POWER_STATUS
+//    MSG_MEMINFO,
+//    MSG_CURRENT_WAYPOINT,
+//    MSG_GPS_RAW,
+//    MSG_GPS_RTK,
+//    MSG_GPS2_RAW,
+//    MSG_GPS2_RTK,
+//    MSG_NAV_CONTROLLER_OUTPUT,
+//    MSG_FENCE_STATUS,
+//    MSG_POSITION_TARGET_GLOBAL_INT,
+    MSG_PIXHAWK_HG_MED,
+    MSG_DEBUGTEXT,
+    MSG_HEARTBEAT
 };
 static const ap_message STREAM_POSITION_msgs[] = {
-    MSG_LOCATION,
-    MSG_LOCAL_POSITION
+//    MSG_LOCATION,
+//    MSG_LOCAL_POSITION
+    MSG_PIXHAWK_HG_SLOW
 };
 static const ap_message STREAM_RAW_CONTROLLER_msgs[] = {
-    MSG_SERVO_OUT,
+//    MSG_SERVO_OUT,
 };
 static const ap_message STREAM_RC_CHANNELS_msgs[] = {
-    MSG_SERVO_OUTPUT_RAW,
-    MSG_RADIO_IN
+//    MSG_SERVO_OUTPUT_RAW,
+//    MSG_RADIO_IN
 };
 static const ap_message STREAM_EXTRA1_msgs[] = {
-    MSG_ATTITUDE,
-    MSG_SIMSTATE, // SIMSTATE, AHRS2
-    MSG_RPM,
-    MSG_AOA_SSA,
-    MSG_PID_TUNING,
-    MSG_LANDING,
-    MSG_ESC_TELEMETRY,
+//    MSG_ATTITUDE,
+//    MSG_SIMSTATE, // SIMSTATE, AHRS2
+//    MSG_RPM,
+//    MSG_AOA_SSA,
+//    MSG_PID_TUNING,
+//    MSG_LANDING,
+//    MSG_ESC_TELEMETRY,
 };
 static const ap_message STREAM_EXTRA2_msgs[] = {
-    MSG_VFR_HUD
+//    MSG_VFR_HUD
 };
 static const ap_message STREAM_EXTRA3_msgs[] = {
-    MSG_AHRS,
-    MSG_HWSTATUS,
-    MSG_WIND,
-    MSG_RANGEFINDER,
-    MSG_SYSTEM_TIME,
-#if AP_TERRAIN_AVAILABLE
-    MSG_TERRAIN,
-#endif
-    MSG_BATTERY2,
-    MSG_BATTERY_STATUS,
-    MSG_MOUNT_STATUS,
-    MSG_OPTICAL_FLOW,
-    MSG_GIMBAL_REPORT,
-    MSG_MAG_CAL_REPORT,
-    MSG_MAG_CAL_PROGRESS,
-    MSG_EKF_STATUS_REPORT,
-    MSG_VIBRATION,
+//    MSG_AHRS,
+//    MSG_HWSTATUS,
+//    MSG_WIND,
+//    MSG_RANGEFINDER,
+//    MSG_SYSTEM_TIME,
+//#if AP_TERRAIN_AVAILABLE
+//    MSG_TERRAIN,
+//#endif
+//    MSG_BATTERY2,
+//    MSG_BATTERY_STATUS,
+//    MSG_MOUNT_STATUS,
+//    MSG_OPTICAL_FLOW,
+//    MSG_GIMBAL_REPORT,
+//    MSG_MAG_CAL_REPORT,
+//    MSG_MAG_CAL_PROGRESS,
+//    MSG_EKF_STATUS_REPORT,
+//    MSG_VIBRATION,
 };
 static const ap_message STREAM_PARAMS_msgs[] = {
-    MSG_NEXT_PARAM
+//    MSG_NEXT_PARAM
 };
 static const ap_message STREAM_ADSB_msgs[] = {
-    MSG_ADSB_VEHICLE
+//    MSG_ADSB_VEHICLE
 };
 
 const struct GCS_MAVLINK::stream_entries GCS_MAVLINK::all_stream_entries[] = {
@@ -1191,6 +1227,12 @@ MAV_RESULT GCS_MAVLINK_Plane::handle_command_long_packet(const mavlink_command_l
 void GCS_MAVLINK_Plane::handleMessage(mavlink_message_t* msg)
 {
     switch (msg->msgid) {
+
+    case MAVLINK_MSG_ID_XCSOAR_CALCULATED:
+    {
+        handle_xcsoar_calculated_data(msg);
+        break;
+    }
 
 #if GEOFENCE_ENABLED == ENABLED
     // receive a fence point from GCS and store in EEPROM
