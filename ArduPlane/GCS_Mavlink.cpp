@@ -109,6 +109,98 @@ MAV_STATE GCS_MAVLINK_Plane::system_status() const
     return MAV_STATE_STANDBY;
 }
 
+void Plane::send_pixhawk_hg_fast(mavlink_channel_t chan)
+{
+    Vector3f accel = ahrs.get_accel_ef_blended();
+    mavlink_msg_pixhawk_hg_fast_send(
+        chan,
+        (uint32_t)((gps.time_epoch_usec() % 86400000000) / 1000),
+        accel.x,
+        accel.y,
+        accel.z,
+        ahrs.roll,
+        ahrs.pitch,
+        (uint16_t)ahrs.yaw_sensor);
+}
+
+void Plane::send_pixhawk_hg_med(mavlink_channel_t chan)
+{
+    Vector3f v;
+    static float ias, tas;
+    static uint32_t as_last_update=0;
+
+    // check for new airspeed update
+    uint32_t t = airspeed.last_update_ms();
+    if( t != as_last_update){
+        ias = smoothed_airspeed;
+        tas = get_true_airspeed();
+        as_last_update = t;
+    }
+    if( ! ahrs.get_velocity_NED(v)){
+        v.zero();
+    }
+
+    mavlink_msg_pixhawk_hg_med_send(
+        chan,
+        current_loc.lat,                 // in 1E7 degrees
+        current_loc.lng,                 // in 1E7 degrees
+        current_loc.alt * 10,            // millimeters above sea level
+        (int16_t)(v.x * 100.),           // X speed cm/s (+ve North)
+        (int16_t)(v.y * 100.),           // Y speed cm/s (+ve East)
+        (int16_t)(v.z * 100.),           // Z speed cm/s (+ve up)
+        (int16_t)(vario_TE * 100.),      // total energy vario cm/s (+ve up)
+        ias,                             // indicated airspeed
+        tas);                            // true airspeed
+}
+
+void Plane::send_pixhawk_hg_slow(mavlink_channel_t chan)
+{
+    Location loc = gps.location();
+    Vector3f wind = ahrs.wind_estimate();
+    // get temperature from airspeed sensor if available
+    float temperature;
+    if( ! airspeed.get_temperature(temperature)){
+        temperature = barometer.get_temperature();
+    }
+    uint64_t gps_time = gps.time_epoch_usec() / 1000000;
+
+    mavlink_msg_pixhawk_hg_slow_send(
+        chan,
+        gps_time,
+        gps.get_hdop(),
+        loc.alt * 10, // in mm
+        gps.status(),
+        gps.num_sats(),
+        temperature,
+        0,  // humidity
+        wind.x,  // North +ve
+        wind.y,  // East +ve
+        0); // Down +ve (not implemented)
+}
+
+/*
+  Read and process data from XCSoar
+ */
+void GCS_MAVLINK_Plane::handle_xcsoar_calculated_data(mavlink_message_t *msg)
+{
+    mavlink_xcsoar_calculated_t packet;
+    mavlink_msg_xcsoar_calculated_decode(msg, &packet);
+
+    plane.xcsoar_data.speed_to_fly = packet.speed_to_fly;
+    if( packet.current_turnpoint != plane.xcsoar_data.current_turnpoint){
+        // Sound the reached turnpoint signal
+        plane.audio_vario.vario.trigger_alarm( AUDIO_ALARM_WAYPOINT_REACHED);
+        plane.xcsoar_data.current_turnpoint = packet.current_turnpoint;
+    }
+    plane.xcsoar_data.flying = packet.flying;
+    plane.xcsoar_data.circling = packet.circling;
+    if( packet.airspace_warning_idx != plane.xcsoar_data.airspace_warning_idx){
+        // Sound an airspace alarm
+        plane.audio_vario.vario.trigger_alarm( AUDIO_ALARM_AIRSPACE_WARNING);
+        plane.xcsoar_data.airspace_warning_idx = packet.airspace_warning_idx;
+    }
+    plane.xcsoar_data.terrain_warning = packet.terrain_warning;
+}
 
 void GCS_MAVLINK_Plane::send_attitude() const
 {

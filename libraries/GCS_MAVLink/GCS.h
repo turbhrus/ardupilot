@@ -39,6 +39,10 @@
 /// stream
 enum ap_message : uint8_t {
     MSG_HEARTBEAT,
+    MSG_DEBUGTEXT,
+    MSG_PIXHAWK_HG_FAST,
+    MSG_PIXHAWK_HG_MED,
+    MSG_PIXHAWK_HG_SLOW,
     MSG_ATTITUDE,
     MSG_LOCATION,
     MSG_EXTENDED_STATUS1,

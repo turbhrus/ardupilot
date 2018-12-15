@@ -58,4 +58,5 @@ private:
     int16_t vfr_hud_throttle() const override;
     float vfr_hud_climbrate() const override;
 
+    void handle_xcsoar_calculated_data(mavlink_message_t *msg);
 };

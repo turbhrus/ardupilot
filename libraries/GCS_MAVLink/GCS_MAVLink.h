@@ -30,7 +30,7 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
 
-#include "include/mavlink/v2.0/ardupilotmega/version.h"
+#include "include/mavlink/v2.0/PIXHAWK/version.h"
 
 #define MAVLINK_MAX_PAYLOAD_LEN 255
 
@@ -70,7 +70,7 @@ uint16_t comm_get_available(mavlink_channel_t chan);
 uint16_t comm_get_txspace(mavlink_channel_t chan);
 
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS
-#include "include/mavlink/v2.0/ardupilotmega/mavlink.h"
+#include "include/mavlink/v2.0/PIXHAWK/mavlink.h"
 
 // return a MAVLink variable type given a AP_Param type
 uint8_t mav_var_type(enum ap_var_type t);
