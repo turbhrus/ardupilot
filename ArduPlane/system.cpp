@@ -219,6 +219,9 @@ void Plane::init_ardupilot()
 
     // disable safety if requested
     BoardConfig.init_safety();
+
+    audio_vario.init();
+    hygrometer.init();
 }
 
 //********************************************************************************
