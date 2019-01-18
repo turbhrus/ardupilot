@@ -154,6 +154,9 @@ public:
         STREAM_EXTRA3,
         STREAM_PARAMS,
         STREAM_ADSB,
+        STREAM_HG_FAST,
+        STREAM_HG_MED,
+        STREAM_HG_SLOW,
         NUM_STREAMS
     };
 

@@ -644,7 +644,7 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
     // @Range: 0 10
     // @Increment: 1
     // @User: Advanced
-    AP_GROUPINFO("RAW_SENS", 0, GCS_MAVLINK, streamRates[0],  15),
+    AP_GROUPINFO("RAW_SENS", 0, GCS_MAVLINK, streamRates[0],  1),
 
     // @Param: EXT_STAT
     // @DisplayName: Extended status stream rate to ground station
@@ -653,7 +653,7 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
     // @Range: 0 10
     // @Increment: 1
     // @User: Advanced
-    AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRates[1],  6),
+    AP_GROUPINFO("EXT_STAT", 1, GCS_MAVLINK, streamRates[1],  1),
 
     // @Param: RC_CHAN
     // @DisplayName: RC Channel stream rate to ground station
@@ -726,82 +726,115 @@ const AP_Param::GroupInfo GCS_MAVLINK::var_info[] = {
     // @Increment: 1
     // @User: Advanced
     AP_GROUPINFO("ADSB",   9, GCS_MAVLINK, streamRates[9],  5),
+
+    // @Param: HG_FAST
+    // @DisplayName: XCSoar high rate messages
+    // @Description: XCSoar high rate messages
+    // @Units: Hz
+    // @Range: 0 20
+    // @Increment: 1
+    // @User: Advanced
+    AP_GROUPINFO("HG_FAST", 10, GCS_MAVLINK, streamRates[10],  15),
+
+    // @Param: HG_MED
+    // @DisplayName: XCSoar medium rate messages
+    // @Description: XCSoar medium rate messages
+    // @Units: Hz
+    // @Range: 0 10
+    // @Increment: 1
+    // @User: Advanced
+    AP_GROUPINFO("HG_MED", 11, GCS_MAVLINK, streamRates[11],  6),
+
+    // @Param: HG_SLOW
+    // @DisplayName: XCSoar low rate messages
+    // @Description: XCSoar low rate messages
+    // @Units: Hz
+    // @Range: 0 10
+    // @Increment: 1
+    // @User: Advanced
+    AP_GROUPINFO("HG_SLOW", 12, GCS_MAVLINK, streamRates[12],  1),
     AP_GROUPEND
 };
 
 static const ap_message STREAM_RAW_SENSORS_msgs[] = {
-//    MSG_RAW_IMU,
-//    MSG_SCALED_IMU2,
-//    MSG_SCALED_IMU3,
-//    MSG_SCALED_PRESSURE,
-//    MSG_SCALED_PRESSURE2,
-//    MSG_SCALED_PRESSURE3,
-//    MSG_SENSOR_OFFSETS,
-    MSG_PIXHAWK_HG_FAST
+    MSG_RAW_IMU,
+    MSG_SCALED_IMU2,
+    MSG_SCALED_IMU3,
+    MSG_SCALED_PRESSURE,
+    MSG_SCALED_PRESSURE2,
+    MSG_SCALED_PRESSURE3,
+    MSG_SENSOR_OFFSETS,
 };
 static const ap_message STREAM_EXTENDED_STATUS_msgs[] = {
-//    MSG_EXTENDED_STATUS1, // SYS_STATUS, POWER_STATUS
-//    MSG_MEMINFO,
-//    MSG_CURRENT_WAYPOINT,
-//    MSG_GPS_RAW,
-//    MSG_GPS_RTK,
-//    MSG_GPS2_RAW,
-//    MSG_GPS2_RTK,
-//    MSG_NAV_CONTROLLER_OUTPUT,
-//    MSG_FENCE_STATUS,
-//    MSG_POSITION_TARGET_GLOBAL_INT,
-    MSG_PIXHAWK_HG_MED,
-    MSG_DEBUGTEXT,
-    MSG_HEARTBEAT
+    MSG_EXTENDED_STATUS1, // SYS_STATUS, POWER_STATUS
+    MSG_MEMINFO,
+    MSG_CURRENT_WAYPOINT,
+    MSG_GPS_RAW,
+    MSG_GPS_RTK,
+    MSG_GPS2_RAW,
+    MSG_GPS2_RTK,
+    MSG_NAV_CONTROLLER_OUTPUT,
+    MSG_FENCE_STATUS,
+    MSG_POSITION_TARGET_GLOBAL_INT,
 };
 static const ap_message STREAM_POSITION_msgs[] = {
-//    MSG_LOCATION,
-//    MSG_LOCAL_POSITION
-    MSG_PIXHAWK_HG_SLOW
+    MSG_LOCATION,
+    MSG_LOCAL_POSITION,
 };
 static const ap_message STREAM_RAW_CONTROLLER_msgs[] = {
-//    MSG_SERVO_OUT,
+    MSG_SERVO_OUT,
 };
 static const ap_message STREAM_RC_CHANNELS_msgs[] = {
-//    MSG_SERVO_OUTPUT_RAW,
-//    MSG_RADIO_IN
+    MSG_SERVO_OUTPUT_RAW,
+    MSG_RADIO_IN
 };
 static const ap_message STREAM_EXTRA1_msgs[] = {
-//    MSG_ATTITUDE,
-//    MSG_SIMSTATE, // SIMSTATE, AHRS2
-//    MSG_RPM,
-//    MSG_AOA_SSA,
-//    MSG_PID_TUNING,
-//    MSG_LANDING,
-//    MSG_ESC_TELEMETRY,
+    MSG_ATTITUDE,
+    MSG_SIMSTATE, // SIMSTATE, AHRS2
+    MSG_RPM,
+    MSG_AOA_SSA,
+    MSG_PID_TUNING,
+    MSG_LANDING,
+    MSG_ESC_TELEMETRY,
 };
 static const ap_message STREAM_EXTRA2_msgs[] = {
-//    MSG_VFR_HUD
+    MSG_VFR_HUD
 };
 static const ap_message STREAM_EXTRA3_msgs[] = {
-//    MSG_AHRS,
-//    MSG_HWSTATUS,
-//    MSG_WIND,
-//    MSG_RANGEFINDER,
-//    MSG_SYSTEM_TIME,
-//#if AP_TERRAIN_AVAILABLE
-//    MSG_TERRAIN,
-//#endif
-//    MSG_BATTERY2,
-//    MSG_BATTERY_STATUS,
-//    MSG_MOUNT_STATUS,
-//    MSG_OPTICAL_FLOW,
-//    MSG_GIMBAL_REPORT,
-//    MSG_MAG_CAL_REPORT,
-//    MSG_MAG_CAL_PROGRESS,
-//    MSG_EKF_STATUS_REPORT,
-//    MSG_VIBRATION,
+    MSG_AHRS,
+    MSG_HWSTATUS,
+    MSG_WIND,
+    MSG_RANGEFINDER,
+    MSG_SYSTEM_TIME,
+#if AP_TERRAIN_AVAILABLE
+    MSG_TERRAIN,
+#endif
+    MSG_BATTERY2,
+    MSG_BATTERY_STATUS,
+    MSG_MOUNT_STATUS,
+    MSG_OPTICAL_FLOW,
+    MSG_GIMBAL_REPORT,
+    MSG_MAG_CAL_REPORT,
+    MSG_MAG_CAL_PROGRESS,
+    MSG_EKF_STATUS_REPORT,
+    MSG_VIBRATION,
 };
 static const ap_message STREAM_PARAMS_msgs[] = {
-//    MSG_NEXT_PARAM
+    MSG_NEXT_PARAM
 };
 static const ap_message STREAM_ADSB_msgs[] = {
-//    MSG_ADSB_VEHICLE
+    MSG_ADSB_VEHICLE
+};
+static const ap_message STREAM_HG_FAST_msgs[] = {
+    MSG_PIXHAWK_HG_FAST
+};
+static const ap_message STREAM_HG_MED_msgs[] = {
+    MSG_PIXHAWK_HG_MED,
+    MSG_DEBUGTEXT
+};
+static const ap_message STREAM_HG_SLOW_msgs[] = {
+    MSG_PIXHAWK_HG_SLOW,
+    MSG_HEARTBEAT
 };
 
 const struct GCS_MAVLINK::stream_entries GCS_MAVLINK::all_stream_entries[] = {
@@ -815,6 +848,9 @@ const struct GCS_MAVLINK::stream_entries GCS_MAVLINK::all_stream_entries[] = {
     MAV_STREAM_ENTRY(STREAM_EXTRA3),
     MAV_STREAM_ENTRY(STREAM_PARAMS),
     MAV_STREAM_ENTRY(STREAM_ADSB),
+    MAV_STREAM_ENTRY(STREAM_HG_FAST),
+    MAV_STREAM_ENTRY(STREAM_HG_MED),
+    MAV_STREAM_ENTRY(STREAM_HG_SLOW),
     MAV_STREAM_TERMINATOR // must have this at end of stream_entries
 };
 
