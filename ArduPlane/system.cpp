@@ -221,7 +221,7 @@ void Plane::init_ardupilot()
     BoardConfig.init_safety();
 
     audio_vario.init();
-    hygrometer.init();
+//    hygrometer.init();
 }
 
 //********************************************************************************

@@ -39,7 +39,7 @@
  
 #include "Humidity_SHT31.h"
 
-#define SHT31_DEFAULT_ADDR    0x44
+#define SHT31_DEFAULT_ADDR    0x44     // TODO: Check this address for ardupilot conflicts before using!
 #define SHT31_MEAS_HIGHREP_STRETCH 0x2C06
 #define SHT31_MEAS_MEDREP_STRETCH  0x2C0D
 #define SHT31_MEAS_LOWREP_STRETCH  0x2C10
